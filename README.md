@@ -1,2 +1,0 @@
-# DETA
-Web App
