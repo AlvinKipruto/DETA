@@ -5,20 +5,28 @@ import "../styles/homescreen.css";
 const HomeScreen = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      navigate("/login");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate("/login");
   };
 
   return (
     <div className="container">
-      <h1 className="title">Welcome to Inventory Management App</h1>
-      <button className="button" onClick={handleLogout} aria-label="Logout from the app">
-        <span className="buttonText">Logout</span>
-      </button>
+      <h1 className="title">Welcome to Inventory Management</h1>
+      <div className="button-group">
+        <button 
+          className="button inventory-btn"
+          onClick={() => navigate("/inventory")}
+        >
+          Manage Inventory
+        </button>
+        <button 
+          className="button logout-btn" 
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

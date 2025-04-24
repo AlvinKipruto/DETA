@@ -1,0 +1,104 @@
+.inventory-container {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+  
+  .back-btn {
+    background: #6c757d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+  
+  .back-btn:hover {
+    background: #5a6268;
+  }
+  
+  .search-bar {
+    margin-bottom: 1.5rem;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .add-item-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .add-item-form input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .add-item-form button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+  
+  .add-item-form button:hover {
+    background: #0069d9;
+  }
+  
+  .inventory-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    background: #f8f9fa;
+    padding: 1rem;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .inventory-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    padding: 1rem;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .inventory-item:last-child {
+    border-bottom: none;
+  }
+  
+  .delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .delete-btn:hover {
+    background: #c82333;
+  }
+  
+  .no-items {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+  }

@@ -1,15 +1,35 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
+import InventoryScreen from './screens/InventoryScreen';
+
+const isAuthenticated = () => {
+  return localStorage.getItem('authToken') !== null;
+};
+
+const ProtectedRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignupScreen />} />
+        
+        <Route path="/" element={
+          <ProtectedRoute>
+            <HomeScreen />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/inventory" element={
+          <ProtectedRoute>
+            <InventoryScreen />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );
