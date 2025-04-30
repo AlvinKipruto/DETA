@@ -44,6 +44,24 @@
   background-color: #218838;
 }
 
+.sales-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.sales-btn:hover {
+  background-color: #0056b3;
+}
+
+.purchases-btn {
+  background-color: #ffc107;
+  color: #222;
+}
+
+.purchases-btn:hover {
+  background-color: #e0a800;
+}
+
 .logout-btn {
   background-color: #dc3545;
   color: white;

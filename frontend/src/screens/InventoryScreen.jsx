@@ -46,7 +46,6 @@ const InventoryScreen = () => {
   return (
     <div className="inventory-container">
       <h1>Inventory Management</h1>
-      <button className="back-btn" onClick={() => navigate("/")}>Back to Home</button>
       
       <div className="search-bar">
         <input
@@ -120,6 +119,9 @@ const InventoryScreen = () => {
           <p className="no-items">No items found</p>
         )}
       </div>
+      <br />
+      <button className="back-btn" onClick={() => navigate("/")}>Back to Home</button>
+
     </div>
   );
 };

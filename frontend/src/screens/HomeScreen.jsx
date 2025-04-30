@@ -21,6 +21,18 @@ const HomeScreen = () => {
           Manage Inventory
         </button>
         <button 
+          className="button sales-btn" 
+          onClick={() => navigate("/sales")}
+        >
+          Sales
+        </button>
+        <button 
+          className="button purchases-btn" 
+          onClick={() => navigate("/purchases")}
+        >
+          Purchases
+        </button>
+        <button 
           className="button logout-btn" 
           onClick={handleLogout}
         >
