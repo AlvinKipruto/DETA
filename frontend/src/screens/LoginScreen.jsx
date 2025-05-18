@@ -24,7 +24,7 @@ const LoginScreen = () => {
       // In a real app, you would verify credentials with your backend
       if (email === "admin@example.com" && password === "admin123") {
         localStorage.setItem('authToken', 'dummy-auth-token');
-        navigate("/");
+        navigate("/home");
       } else {
         setError("Invalid credentials");
       }

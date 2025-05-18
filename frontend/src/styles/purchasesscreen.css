@@ -1,67 +1,232 @@
-.purchases-container {
-    max-width: 800px;
-    margin: 3rem auto;
-    padding: 2rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .purchases-title {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-    color: #343a40;
-  }
-  
-  .purchases-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 1rem;
-  }
-  
-  .purchases-table th,
-  .purchases-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .purchases-table th {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .purchases-table tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .back-button {
-    background: #6c757d;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-  }
-  
-  .back-button:hover {
-    background: #bd0b0b;
-  }
+.app-logo {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  .home-btn{
-    background:rgb(91, 144, 184);
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-  }
-  
-  .home-btn:hover {
-    background: #2aa739;
-  }
-  
-  
+.app-logo h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+}
+
+.sidebar-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: rgba(24, 144, 255, 0.1);
+  border-left-color: #1890ff;
+}
+
+.sidebar-item-content {
+  display: flex;
+  align-items: center;
+}
+
+.nav-icon {
+  margin-right: 10px;
+}
+
+.sidebar-item-title {
+  font-size: 14px;
+}/* Add these styles to your purchasesscreen.css file */
+
+/* Main layout styles */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #001529;
+  color: white;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: calc(100vw - 250px);
+  overflow: hidden;
+  margin: 0;
+  margin-left: 250px; /* Align with sidebar width */
+  padding: 0;
+  background-color: #f0f2f5;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.purchases-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.purchases-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.purchases-table th,
+.purchases-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e8e8e8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.purchases-table th {
+  background-color: #fafafa;
+  font-weight: 500;
+}
+
+.purchases-table tr:hover {
+  background-color: #fafafa;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding: 10px 0;
+}
+
+.back-button,
+.home-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.back-button {
+  background-color: #f0f0f0;
+}
+
+.home-btn {
+  background-color: #1890ff;
+  color: white;
+}
+
+/* Delete button styles */
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+  background-color: #ff7875;
+}
+
+/* Confirmation dialog styles */
+.confirmation-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirmation-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 400px;
+  max-width: 90%;
+}
+
+.confirmation-content h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.confirm-btn:hover {
+  background-color: #ff7875;
+}

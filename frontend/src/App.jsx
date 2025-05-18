@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import HomeScreen from './screens/HomeScreen';
+
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
+import HomeScreen from './screens/HomeScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import SalesPage from './screens/SalesPage';
 import PurchasesScreen from './screens/PurchasesScreen'; // ✅ New
@@ -18,10 +19,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginScreen />} />
+        <Route path="/" element={
+          <ProtectedRoute>
+            <LoginScreen />
+          </ProtectedRoute>
+        } />
         <Route path="/signup" element={<SignupScreen />} />
 
-        <Route path="/" element={
+        <Route path="/home" element={
           <ProtectedRoute>
             <HomeScreen />
           </ProtectedRoute>
