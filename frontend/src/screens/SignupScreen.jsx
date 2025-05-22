@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/signupscreen.css";
 
+const BASE_URL = "http://localhost:5000/api";
+
 const SignupScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,8 +16,18 @@ const SignupScreen = () => {
       return;
     }
     try {
-      // Replace with your custom signup API call
-      // Example: const response = await fetch("/api/signup", { method: "POST", body: JSON.stringify({ email, password }) });
+      const response = await fetch(`${BASE_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(`Error: ${data.message || "Signup failed"}`);
+        return;
+      }
+
       alert("Success: Account created successfully!");
       navigate("/login");
     } catch (error) {
@@ -50,8 +62,8 @@ const SignupScreen = () => {
       <button className="button" onClick={handleSignup}>
         <span className="buttonText">Sign Up</span>
       </button>
-      <button 
-        className="linkButton" 
+      <button
+        className="linkButton"
         onClick={() => navigate("/login")}
       >
         <span className="linkText">Already have an account? Login</span>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/loginscreen.css";
 
+const BASE_URL = "http://localhost:5000/api";
+
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,23 +13,28 @@ const LoginScreen = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (!email || !password) {
       setError("Please fill in all fields");
       return;
     }
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // In a real app, you would verify credentials with your backend
-      if (email === "admin@example.com" && password === "admin123") {
-        localStorage.setItem('authToken', 'dummy-auth-token');
-        navigate("/home");
-      } else {
-        setError("Invalid credentials");
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.message || "Invalid credentials");
+        return;
       }
+
+      const data = await response.json();
+      localStorage.setItem("authToken", data.token);
+      navigate("/home");
     } catch (error) {
       setError("Login failed. Please try again.");
     }
@@ -58,8 +65,8 @@ const LoginScreen = () => {
           <span className="buttonText">Login</span>
         </button>
       </form>
-      <button 
-        className="linkButton" 
+      <button
+        className="linkButton"
         onClick={() => navigate("/signup")}
       >
         <span className="linkText">Don't have an account? Sign Up</span>

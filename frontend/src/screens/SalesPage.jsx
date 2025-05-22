@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaBox, FaShoppingCart, FaReceipt, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaHome,
+  FaBox,
+  FaShoppingCart,
+  FaReceipt,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import "../styles/salespage.css";
+
+const BASE_URL = "http://localhost:5000/api";
 
 const SalesPage = () => {
   const [productName, setProductName] = useState("");
@@ -11,8 +19,54 @@ const SalesPage = () => {
   const [activeTab, setActiveTab] = useState("Sales");
   const navigate = useNavigate();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const saleEntry = {
+      productName,
+      quantity: parseInt(quantitySold, 10),
+      price: parseFloat(soldPrice),
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}/sales`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saleEntry),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.message || "Failed to record sale");
+        return;
+      }
+
+      setProductName("");
+      setQuantitySold("");
+      setSoldPrice("");
+      alert("Sale recorded successfully!");
+      navigate("/purchases");
+    } catch (error) {
+      alert("Error recording sale. Please try again.");
+    }
+  };
+
+  const handleCancelClick = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to cancel this entry? Any unsaved data will be lost."
+      )
+    ) {
+      setProductName("");
+      setQuantitySold("");
+      setSoldPrice("");
+    }
+  };
+
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
     navigate("/login");
   };
 
@@ -21,66 +75,33 @@ const SalesPage = () => {
       title: "Home",
       path: "/home",
       icon: <FaHome className="nav-icon" />,
-      hasSubmenu: true
     },
     {
       title: "Inventory",
       path: "/inventory",
       icon: <FaBox className="nav-icon" />,
-      hasSubmenu: true
     },
     {
       title: "Sales",
       path: "/sales",
       icon: <FaShoppingCart className="nav-icon" />,
-      hasSubmenu: true
     },
     {
       title: "Purchases",
       path: "/purchases",
       icon: <FaReceipt className="nav-icon" />,
-      hasSubmenu: true
-    }
+    },
+    {
+      title: "Logout",
+      path: "#",
+      icon: <FaSignOutAlt className="nav-icon" />,
+      action: handleLogout,
+    },
   ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const saleEntry = {
-      productName,
-      quantity: parseInt(quantitySold, 10),
-      price: parseFloat(soldPrice),
-      date: new Date().toISOString(),
-    };
-
-    const existingData = JSON.parse(localStorage.getItem("purchases")) || [];
-    existingData.push(saleEntry);
-    localStorage.setItem("purchases", JSON.stringify(existingData));
-
-    // Clear form
-    setProductName("");
-    setQuantitySold("");
-    setSoldPrice("");
-
-    // Show success message or notification
-    alert("Sale recorded successfully!");
-    
-    // Navigate to purchases page
-    navigate("/purchases");
-  };
-  
-  const handleCancelClick = () => {
-    // Display confirmation dialog
-    if (window.confirm("Are you sure you want to cancel this entry? Any unsaved data will be lost.")) {
-      // Clear the form fields if user confirms
-      setProductName("");
-      setQuantitySold("");
-      setSoldPrice("");
-    }
-  };
 
   return (
     <div className="app-container">
+      {/* Sidebar */}
       <div className="sidebar">
         <div className="app-logo">
           <h1>DETA</h1>
@@ -88,7 +109,7 @@ const SalesPage = () => {
         {sideNavItems.map((item, index) => (
           <div
             key={index}
-            className={`sidebar-item ${activeTab === item.title ? 'active' : ''}`}
+            className={`sidebar-item ${activeTab === item.title ? "active" : ""}`}
             onClick={() => {
               setActiveTab(item.title);
               if (item.action) {
@@ -102,18 +123,24 @@ const SalesPage = () => {
               {item.icon}
               <span className="sidebar-item-title">{item.title}</span>
             </div>
-            {item.hasSubmenu && <span className="submenu-indicator"><HiOutlineChevronRight /></span>}
+            {item.path !== "#" && (
+              <span className="submenu-indicator">
+                <HiOutlineChevronRight />
+              </span>
+            )}
           </div>
         ))}
       </div>
 
+      {/* Main Content */}
       <div className="main-content">
         <div className="page-header">
           <h1>Sales Management</h1>
           <p>Record your sales</p>
         </div>
-        
+
         <div className="sales-container">
+          {/* Sales Entry Form */}
           <div className="card sales-card">
             <h2 className="card-title">Record Sale</h2>
             <form className="sales-form" onSubmit={handleSubmit}>
@@ -128,7 +155,7 @@ const SalesPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="quantitySold">Quantity Sold</label>
@@ -142,9 +169,9 @@ const SalesPage = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="form-group">
-                  <label htmlFor="soldPrice">Sold Price </label>
+                  <label htmlFor="soldPrice">Sold Price</label>
                   <input
                     id="soldPrice"
                     type="number"
@@ -157,18 +184,30 @@ const SalesPage = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="form-actions">
-                <button type="button" className="cancel-button" onClick={handleCancelClick}>Cancel</button>
-                <button type="submit" className="submit-button">Record Sale</button>
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={handleCancelClick}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="submit-button">
+                  Record Sale
+                </button>
               </div>
             </form>
           </div>
-          
+
+          {/* Quick Info Card */}
           <div className="card quick-info-card">
             <h3>Recent Sales</h3>
             <p>View your recent sales activity at a glance</p>
-            <button className="view-all-button" onClick={() => navigate("/purchases")}>
+            <button
+              className="view-all-button"
+              onClick={() => navigate("/purchases")}
+            >
               View All Sales
             </button>
           </div>

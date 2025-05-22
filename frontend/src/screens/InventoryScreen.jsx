@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaBox, FaShoppingCart, FaReceipt, FaSignOutAlt, FaChartBar, FaFile, FaCog } from "react-icons/fa";
-import { BiLinkAlt } from "react-icons/bi";
+import {
+  FaHome,
+  FaBox,
+  FaShoppingCart,
+  FaReceipt
+} from "react-icons/fa";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import "../styles/inventoryscreen.css";
 
@@ -10,50 +14,87 @@ const InventoryScreen = () => {
     const saved = localStorage.getItem('inventory');
     return saved ? JSON.parse(saved) : [];
   });
-  
+
   const [newItem, setNewItem] = useState({
     name: "",
     quantity: "",
     price: "",
     category: ""
   });
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("Inventory");
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, id: null, name: null });
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     navigate("/login");
   };
-  
+
   useEffect(() => {
     localStorage.setItem('inventory', JSON.stringify(items));
   }, [items]);
-  
+
   const handleAddItem = (e) => {
     e.preventDefault();
     if (!newItem.name) return;
-    
-    setItems([...items, {
-      ...newItem,
-      id: Date.now(),
-      quantity: parseInt(newItem.quantity) || 0,
-      price: parseFloat(newItem.price) || 0
-    }]);
-    
+
+    const newQuantity = parseInt(newItem.quantity) || 0;
+    const newPrice = parseFloat(newItem.price) || 0;
+
+    const existingItemIndex = items.findIndex(
+      item => item.name.toLowerCase() === newItem.name.toLowerCase()
+    );
+
+    if (existingItemIndex !== -1) {
+      const updatedItems = [...items];
+      updatedItems[existingItemIndex] = {
+        ...updatedItems[existingItemIndex],
+        quantity: updatedItems[existingItemIndex].quantity + newQuantity,
+        price: newPrice,
+        category: newItem.category || updatedItems[existingItemIndex].category
+      };
+      setItems(updatedItems);
+    } else {
+      setItems([...items, {
+        ...newItem,
+        id: Date.now(),
+        quantity: newQuantity,
+        price: newPrice
+      }]);
+    }
+
     setNewItem({ name: "", quantity: "", price: "", category: "" });
   };
-  
-  const handleDeleteItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
+
+  const handleDeleteItem = (id, itemName) => {
+    setDeleteConfirmation({ show: true, id, name: itemName });
   };
-  
+
+  const confirmDelete = () => {
+    if (deleteConfirmation.id !== null) {
+      setItems(items.filter(item => item.id !== deleteConfirmation.id));
+      setDeleteConfirmation({ show: false, id: null, name: null });
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmation({ show: false, id: null, name: null });
+  };
+
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
+  const existingCategories = [...new Set(items.map(item => item.category).filter(cat => cat && cat.trim() !== ""))];
+
+  const filteredCategories = existingCategories.filter(category =>
+    category.toLowerCase().includes(newItem.category.toLowerCase())
+  );
+
   const sideNavItems = [
     {
       title: "Home",
@@ -130,7 +171,7 @@ const InventoryScreen = () => {
               <input
                 type="text"
                 value={newItem.name}
-                onChange={(e) => setNewItem({...newItem, name: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                 required
                 className="form-input"
               />
@@ -140,30 +181,76 @@ const InventoryScreen = () => {
               <input
                 type="number"
                 value={newItem.quantity}
-                onChange={(e) => setNewItem({...newItem, quantity: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                 required
                 className="form-input"
               />
             </div>
             <div className="form-group">
-              <label>Price</label>
+              <label>Price (KES)</label>
               <input
                 type="number"
                 step="0.01"
                 value={newItem.price}
-                onChange={(e) => setNewItem({...newItem, price: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                 required
                 className="form-input"
+                placeholder="Enter price in Kenya Shillings"
               />
             </div>
             <div className="form-group">
               <label>Category</label>
-              <input
-                type="text"
-                value={newItem.category}
-                onChange={(e) => setNewItem({...newItem, category: e.target.value})}
-                className="form-input"
-              />
+              <div className="category-input-container" style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  value={newItem.category}
+                  onChange={(e) => {
+                    setNewItem({ ...newItem, category: e.target.value });
+                    setShowCategoryDropdown(true);
+                  }}
+                  onFocus={() => setShowCategoryDropdown(true)}
+                  onBlur={() => {
+                    setTimeout(() => setShowCategoryDropdown(false), 150);
+                  }}
+                  className="form-input"
+                  placeholder="Type or select a category"
+                />
+                {showCategoryDropdown && filteredCategories.length > 0 && newItem.category && (
+                  <div className="category-dropdown" style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'white',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    zIndex: 1000,
+                    maxHeight: '150px',
+                    overflowY: 'auto'
+                  }}>
+                    {filteredCategories.map((category, index) => (
+                      <div
+                        key={index}
+                        className="category-option"
+                        onClick={() => {
+                          setNewItem({ ...newItem, category });
+                          setShowCategoryDropdown(false);
+                        }}
+                        style={{
+                          padding: '8px 12px',
+                          cursor: 'pointer',
+                          borderBottom: index < filteredCategories.length - 1 ? '1px solid #eee' : 'none'
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                      >
+                        {category}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <button type="submit" className="add-btn">Add Item</button>
           </form>
@@ -171,37 +258,35 @@ const InventoryScreen = () => {
           <div className="inventory-list">
             <h2>Inventory Items</h2>
             {filteredItems.length > 0 ? (
-              <>
-                <table className="inventory-table">
-                  <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Category</th>
-                      <th>Action</th>
+              <table className="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price (KES)</th>
+                    <th>Category</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredItems.map(item => (
+                    <tr key={item.id}>
+                      <td>{item.name}</td>
+                      <td>{item.quantity}</td>
+                      <td>KES {item.price.toFixed(2)}</td>
+                      <td>{item.category}</td>
+                      <td>
+                        <button
+                          onClick={() => handleDeleteItem(item.id, item.name)}
+                          className="delete-btn"
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredItems.map(item => (
-                      <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>${item.price.toFixed(2)}</td>
-                        <td>{item.category}</td>
-                        <td>
-                          <button
-                            onClick={() => handleDeleteItem(item.id)}
-                            className="delete-btn"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <p className="no-items">No items found</p>
             )}
@@ -211,6 +296,19 @@ const InventoryScreen = () => {
         <footer className="main-footer">
           <button onClick={() => navigate("/")} className="back-btn">Back to Home</button>
         </footer>
+
+        {deleteConfirmation.show && (
+          <div className="confirmation-dialog">
+            <div className="confirmation-content">
+              <h3>Confirm Delete</h3>
+              <p>Are you sure you want to delete "{deleteConfirmation.name}"?</p>
+              <div className="confirmation-buttons">
+                <button className="cancel-btn" onClick={cancelDelete}>Cancel</button>
+                <button className="confirm-btn" onClick={confirmDelete}>Yes, Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

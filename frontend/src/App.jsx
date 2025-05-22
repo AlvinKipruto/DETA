@@ -5,7 +5,7 @@ import SignupScreen from './screens/SignupScreen';
 import HomeScreen from './screens/HomeScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import SalesPage from './screens/SalesPage';
-import PurchasesScreen from './screens/PurchasesScreen'; // ✅ New
+import PurchasesScreen from './screens/PurchasesScreen'; 
 
 const isAuthenticated = () => {
   return localStorage.getItem('authToken') !== null;
@@ -19,11 +19,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
-          <ProtectedRoute>
-            <LoginScreen />
-          </ProtectedRoute>
-        } />
+         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<LoginScreen/>} />
+         
         <Route path="/signup" element={<SignupScreen />} />
 
         <Route path="/home" element={
